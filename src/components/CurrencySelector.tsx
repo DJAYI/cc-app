@@ -101,7 +101,14 @@ export function CurrencySelector({
           <Text className="font-semibold text-lg">{toCurrency}</Text>
         </Text>
 
-        <Entypo name="chevron-small-down" size={24} color="white" />
+        <Entypo
+          style={{
+            marginRight: 8,
+          }}
+          name="chevron-small-down"
+          size={24}
+          color="white"
+        />
       </Pressable>
     </Animated.View>
   );

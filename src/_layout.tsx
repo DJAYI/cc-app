@@ -3,6 +3,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { ThemeContext, ThemeProvider } from "./lib/theme/ThemeContext";
 import { useContext, useEffect, useRef } from "react";
 import { useAnimatedThemeColors } from "./hooks/UseAnimatedThemeColors";
+import { ScrollView } from "react-native-gesture-handler";
 
 interface Props {
   children?: React.ReactNode;
@@ -11,7 +12,9 @@ interface Props {
 export function LayoutScreen({ children }: Props) {
   return (
     <ThemeProvider>
-      <LayoutContent>{children}</LayoutContent>
+      <ScrollView>
+        <LayoutContent>{children}</LayoutContent>
+      </ScrollView>
     </ThemeProvider>
   );
 }
