@@ -3,7 +3,7 @@ import { StatusBar } from "expo-status-bar";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { LayoutScreen } from "./_layout";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { useCallback, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { Dimensions, Pressable, Text, View } from "react-native";
 import { CurrencySelector } from "./components/CurrencySelector";
@@ -11,15 +11,8 @@ import { CurrencyInputConversor } from "./components/CurrencyInputConversor";
 import { CurrencySelectorBottomSheet } from "./components/CurrencySelectorBottomSheet";
 import Feather from "@expo/vector-icons/Feather";
 
-import {
-  LineChart,
-  BarChart,
-  PieChart,
-  ProgressChart,
-  ContributionGraph,
-  StackedBarChart,
-} from "react-native-chart-kit";
 import { CurrencyHistoricalChart } from "./components/CurrencyHistoricalChart";
+import { getCurrencies } from "./lib/api/currency-api-client";
 
 export default function App() {
   const handleSheetChanges = useCallback((index: number) => {}, []);
@@ -30,6 +23,10 @@ export default function App() {
   // exposed to Header via prop
   const handlePresentModalPress = useCallback(() => {
     bottomSheetModalRef.current?.present();
+  }, []);
+
+  useEffect(() => {
+    getCurrencies("COP,USD");
   }, []);
 
   return (
