@@ -1,7 +1,7 @@
 const currencyApiUrl = process.env.CURRENCY_API_URL;
 const currencyApiKey = process.env.CURRENCY_API_KEY;
 
-// https://api.currencyapi.com/v3/currencies?apikey=cur_live_CmC4gg9QLmS5ttjledKKzKBwl9GappSrcBlAyNsg&currencies=COP
+
 
 export const fetchCurrencyData = async (endpoint: string, params: Record<string, string>) => {
 
