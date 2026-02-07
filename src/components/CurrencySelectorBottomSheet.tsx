@@ -11,11 +11,7 @@ import { CurrencyTabs } from "./CurrencyTabs";
 import { CurrencySearchInput } from "./CurrencySearchInput";
 import { CurrencyList } from "./CurrencyList";
 import { currencyReducer, initialState } from "@/lib/utils/currencyReducer";
-import {
-  Currencies,
-  Datum,
-  getCurrencies,
-} from "@/lib/api/currency-api-client";
+import { Currencies, data, getCurrencies } from "@/lib/api/currency-api-client";
 
 interface CurrencySelectorBottomSheetProps {
   bottomSheetModalRef: RefObject<BottomSheetModal>;
@@ -42,9 +38,9 @@ export function CurrencySelectorBottomSheet({
     [],
   );
 
-  const [allCurrencies, setAllCurrencies] = useState<Datum[]>([]);
+  const [allCurrencies, setAllCurrencies] = useState<data[]>([]);
 
-  const [filteredCurrencies, setFilteredCurrencies] = useState<Datum[]>([]);
+  const [filteredCurrencies, setFilteredCurrencies] = useState<data[]>([]);
 
   const handleSearch = (text: string) => {
     if (!text || text.length < 2) {

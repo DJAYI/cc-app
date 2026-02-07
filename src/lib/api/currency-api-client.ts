@@ -3,10 +3,10 @@ const currencyApiKey = process.env.EXPO_PUBLIC_CURRENCY_API_KEY;
 
 
 export interface Currencies {
-    data: { [key: string]: Datum };
+    data: { [key: string]: data };
 }
 
-export interface Datum {
+export interface data {
     symbol: string;
     name: string;
     symbol_native: string;

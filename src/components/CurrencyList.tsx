@@ -1,10 +1,10 @@
 import { BottomSheetFlatList } from "@gorhom/bottom-sheet";
 import { useCallback } from "react";
 import { CurrencyItem } from "./CurrencyItem";
-import { Datum } from "@/lib/api/currency-api-client";
+import { data } from "@/lib/api/currency-api-client";
 
 interface CurrencyListProps {
-  data: Datum[];
+  data: data[];
   tabSelected: "from" | "to";
   from?: string;
   to?: string;
@@ -50,7 +50,7 @@ export function CurrencyList({
   return (
     <BottomSheetFlatList
       data={data.map((d) => ({ ...d, countryCode: d.countries[0] ?? "" }))}
-      keyExtractor={(i: Datum) => i.code}
+      keyExtractor={(i: data) => i.code}
       renderItem={renderItem}
     />
   );
