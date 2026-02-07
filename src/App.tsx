@@ -3,7 +3,7 @@ import { StatusBar } from "expo-status-bar";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { LayoutScreen } from "./_layout";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { Dimensions, Pressable, Text, View } from "react-native";
 import { CurrencySelector } from "./components/CurrencySelector";
@@ -12,22 +12,26 @@ import { CurrencySelectorBottomSheet } from "./components/CurrencySelectorBottom
 import Feather from "@expo/vector-icons/Feather";
 
 import { CurrencyHistoricalChart } from "./components/CurrencyHistoricalChart";
-import { getCurrencies } from "./lib/api/currency-api-client";
+import {
+  Currencies,
+  fetchCurrencyData,
+  getCurrencies,
+  getLatestRates,
+  LatestRate,
+} from "./lib/api/currency-api-client";
 
 export default function App() {
   const handleSheetChanges = useCallback((index: number) => {}, []);
 
   // ref
-  const bottomSheetModalRef = useRef<BottomSheetModal>(null);
+  const bottomSheetModalRef = useRef<BottomSheetModal | null>(null);
 
   // exposed to Header via prop
   const handlePresentModalPress = useCallback(() => {
     bottomSheetModalRef.current?.present();
   }, []);
 
-  useEffect(() => {
-    getCurrencies("COP,USD");
-  }, []);
+  const [latestRates, setLatestRates] = useState<LatestRate | null>(null);
 
   return (
     <SafeAreaProvider>
@@ -76,7 +80,9 @@ export default function App() {
           />
         </LayoutScreen>
         <CurrencySelectorBottomSheet
-          bottomSheetModalRef={bottomSheetModalRef}
+          bottomSheetModalRef={
+            bottomSheetModalRef as React.RefObject<BottomSheetModal>
+          }
           handleSheetChanges={handleSheetChanges}
         />
       </GestureHandlerRootView>

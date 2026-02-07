@@ -3,7 +3,7 @@ import {
   BottomSheetModal,
   BottomSheetModalProvider,
 } from "@gorhom/bottom-sheet";
-import { useCallback, useReducer, useState } from "react";
+import { RefObject, useCallback, useEffect, useReducer, useState } from "react";
 import { Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -11,18 +11,28 @@ import { CurrencyTabs } from "./CurrencyTabs";
 import { CurrencySearchInput } from "./CurrencySearchInput";
 import { CurrencyList } from "./CurrencyList";
 import { currencyReducer, initialState } from "@/lib/utils/currencyReducer";
+import {
+  Currencies,
+  Datum,
+  getCurrencies,
+} from "@/lib/api/currency-api-client";
+
+interface CurrencySelectorBottomSheetProps {
+  bottomSheetModalRef: RefObject<BottomSheetModal>;
+  handleSheetChanges: (index: number) => void;
+}
 
 export function CurrencySelectorBottomSheet({
   bottomSheetModalRef,
   handleSheetChanges,
-}) {
+}: CurrencySelectorBottomSheetProps) {
   const insets = useSafeAreaInsets();
 
   const [state, dispatch] = useReducer(currencyReducer, initialState);
   const { tabSelected, from, to } = state;
 
   const renderBackdrop = useCallback(
-    (props) => (
+    (props: any) => (
       <BottomSheetBackdrop
         {...props}
         disappearsOnIndex={-1}
@@ -32,18 +42,9 @@ export function CurrencySelectorBottomSheet({
     [],
   );
 
-  const [allCurrencies] = useState([
-    { key: "1", currencyCode: "USD", currencyName: "United States Dollar" },
-    { key: "2", currencyCode: "COP", currencyName: "Colombian Peso" },
-    { key: "3", currencyCode: "EUR", currencyName: "Euro" },
-    { key: "4", currencyCode: "JPY", currencyName: "Japanese Yen" },
-    { key: "5", currencyCode: "GBP", currencyName: "British Pound Sterling" },
-    { key: "6", currencyCode: "AUD", currencyName: "Australian Dollar" },
-    { key: "7", currencyCode: "CAD", currencyName: "Canadian Dollar" },
-    { key: "8", currencyCode: "CHF", currencyName: "Swiss Franc" },
-  ]);
+  const [allCurrencies, setAllCurrencies] = useState<Datum[]>([]);
 
-  const [filteredCurrencies, setFilteredCurrencies] = useState(allCurrencies);
+  const [filteredCurrencies, setFilteredCurrencies] = useState<Datum[]>([]);
 
   const handleSearch = (text: string) => {
     if (!text || text.length < 2) {
@@ -55,12 +56,23 @@ export function CurrencySelectorBottomSheet({
 
     setFilteredCurrencies(
       allCurrencies.filter(
-        (c) =>
-          c.currencyCode.toLowerCase().includes(query) ||
-          c.currencyName.toLowerCase().includes(query),
+        (currency) =>
+          currency.code.toLowerCase().includes(query) ||
+          currency.name.toLowerCase().includes(query),
       ),
     );
   };
+
+  useEffect(() => {
+    getCurrencies()
+      .then((data) => {
+        const formattedCurrencies = data.data ? Object.values(data.data) : [];
+
+        setAllCurrencies(formattedCurrencies);
+        setFilteredCurrencies(formattedCurrencies);
+      })
+      .catch((error) => console.error("Error fetching currencies:", error));
+  }, []);
 
   return (
     <BottomSheetModalProvider>
@@ -78,7 +90,9 @@ export function CurrencySelectorBottomSheet({
           </Text>
           <CurrencyTabs
             tabSelected={tabSelected}
-            onTabChange={(tab) => dispatch({ type: "SET_TAB", payload: tab })}
+            onTabChange={(tab: "from" | "to") =>
+              dispatch({ type: "SET_TAB", payload: tab })
+            }
           />
 
           <CurrencySearchInput onChange={handleSearch} />
@@ -87,9 +101,9 @@ export function CurrencySelectorBottomSheet({
             <CurrencyList
               data={filteredCurrencies}
               tabSelected={tabSelected}
-              from={from}
-              to={to}
-              onSelect={(currencyCode) =>
+              from={from!}
+              to={to!}
+              onSelect={(currencyCode: string) =>
                 dispatch({
                   type: "SET_CURRENCY",
                   payload: currencyCode,
